@@ -24,6 +24,8 @@ model = torch.hub.load('ultralytics/yolov5', 'custom',  path='best.pt', source='
 model.conf = 0.6 ## allow preds over this threshold
 model.max_det = 2 ## predict max 2 classes
 
+#
+
 i=0
 # Read until video is completed
 size= (640,640)
