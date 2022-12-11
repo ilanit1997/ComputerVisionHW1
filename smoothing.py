@@ -17,6 +17,8 @@ class Smoothing:
         self.first_left_prediction = True
         self.first_right_prediction = True
 
+        self.smoother_params = "window_size" + str(window_size) + "_smoothing" + str(confidence_weighting_method)
+
     def calculate_weighting(self, method=None):
         if method == "log":
             unnormalized_weights = np.log(range(2, self.window_size + 2))
@@ -249,7 +251,6 @@ class Smoothing:
         left_indices = list()
         right_indices = list()
         for index, row in curr_output.iterrows():
-            print(row[6])
             prediction_label = row[6]
             hand, _ = prediction_label.split('_', maxsplit=1)
             if hand.lower() == "left":
