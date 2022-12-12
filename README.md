@@ -28,26 +28,27 @@ yolov5
 All the plots attached below were created by ClearML
 ### Train:
 
-Comparing 2 experiments: #11 and #5
-
-<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/%2311%20VS%20%23%205%20-train%20loss.JPG">
+##### Comparing 2 experiments: #11 and #5 - 
 
 Looking into train metrics, when in red we have # 5, and greens we have #11. It may seem that #5 is better in some metrics, but actually the differences are very small and #11 is much better is the cls loss. 
 
-Comparing 2 experiments: #11 and #12: 
+<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/%2311%20VS%20%23%205%20-train%20loss.JPG">
 
-<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/%2311%20vs%20%2312%20-%20train%20loss.JPG" width="700" height="400">
 
+##### Comparing 2 experiments: #11 and #12 -  
 Looking into the loss figures, we can see that both are very much close, but #11 is superior in regard to cls_loss, as it was also in previous figure
+
+<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/%2311%20vs%20%2312%20-%20train%20loss.JPG">
+
 
 ### Validation:
 
 ## mAP of all experiments:
-<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/%2311%20VS%20%23%205%20-valloss.JPG" width="700" height="400">
+<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/%2311%20VS%20%23%205%20-valloss.JPG">
 
 
-Comparing 2 experiments: #11 and #5:
-<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/%2311%20VS%20%23%205%20-valloss.JPG" width="700" height="400">
+#####  Comparing 2 experiments: #11 and #5:
+<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/%2311%20VS%20%23%205%20-valloss.JPG">
 
 #### Loss
 
