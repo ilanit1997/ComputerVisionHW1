@@ -22,6 +22,7 @@ class MetricEvaluator:
         self.right_predictions = list()
         self.metric_history = {'f1': list(), 'accuracy': list(), 'recall': list(), 'precision': list(), 'f1_macro': list()}
 
+
         # used to construct the metric dictionary and for calculating the Macro-f1 score which averages over the total
         # number of relevant classes (relevant := has a corresponding ground truth)
         self.num_relevant_classes = len(left_relevant_classes.union(right_relevant_classes))

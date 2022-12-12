@@ -13,15 +13,14 @@ cap = cv2.VideoCapture(f'videos/{file_name}.wmv')
 
 ground_truth_df_left = pd.read_csv(f'tool_usage/tools_left/{file_name}.txt', header=None, sep=' ', names=['start', 'end', 'label' ])
 ground_truth_df_right = pd.read_csv(f'tool_usage/tools_right/{file_name}.txt',  header=None, sep=' ', names=['start', 'end', 'label'])
-#
-smoother15_log = Smoothing(window_size=15, confidence_weighting_method="log", bbox_weighting_method=None)
+
+# create smoothing objects for experiments
+smoother25_nosmoothing = Smoothing(window_size=15, confidence_weighting_method='no_smooth', bbox_weighting_method=None)
 smoother25_log = Smoothing(window_size=25, confidence_weighting_method="log", bbox_weighting_method=None)
-smoother15_linear = Smoothing(window_size=15, confidence_weighting_method="linear", bbox_weighting_method=None)
 smoother25_linear = Smoothing(window_size=25, confidence_weighting_method="linear", bbox_weighting_method=None)
-smoother15_superlinear = Smoothing(window_size=15, confidence_weighting_method="super-linear", bbox_weighting_method=None)
 smoother25_superlinear = Smoothing(window_size=25, confidence_weighting_method="super-linear", bbox_weighting_method=None)
 
-smoothing_experiments = [smoother15_log, smoother25_log, smoother15_linear, smoother25_linear, smoother15_superlinear, smoother25_superlinear]
+smoothing_experiments = [smoother25_nosmoothing, smoother25_log, smoother25_linear, smoother25_superlinear]
 # tools_path = 'C:\\Users\\dovid\\PycharmProjects\\CV_hw1_old\\HW1_dataset\\HW1_dataset\\tool_usage'
 evaluator = MetricEvaluator(ground_truth_df_left, ground_truth_df_right)
 
@@ -60,34 +59,15 @@ while (cap.isOpened()):
             output = model(frame_to_rgb)
             output.render()
             output_df = output.pandas().xyxy[0]
-            outputs_smooth = smoother15_log.smooth(curr_output=output_df)
-            # try:
-            #     if len(outputs_smooth) == 2:
-            #         right_df,  left_df = outputs_smooth[0], outputs_smooth[1]
-            #         boxes1 = [left_df['bbox'], right_df['bbox']]
-            #         labels = [left_df['prediction'], right_df['prediction']]
-            #     elif len(outputs_smooth) == 1:
-            #         df = outputs_smooth[0]
-            #         boxes1 = [df['bbox']]
-            #         labels = [df['prediction']]
-            # except TypeError:
-            #     ## TODO - handl
-            #     boxes1 = []
-            #     labels = []
-            boxes1 = [output["bbox"] for output in outputs_smooth]
-            labels = [output["prediction"] for output in outputs_smooth]
 
-            # save predictions in evaluator
-            [evaluator.convert_yolo_output_to_tool(label) for label in labels]
-            # print current metrics / store metrics of current step in evaluator's memory
-            # print(evaluator.calculate_recall())
-            # print(evaluator.calculate_f1())
-            # print(evaluator.calculate_precision())
-            # print(evaluator.calculate_accuracy())
-            # print(evaluator.calculate_macro_f1_score())
-            # print()
-            # print()
-            evaluator.calculate_all_metrics()
+            # # uncomment if show video
+            # outputs_smooth = smoother15_log.smooth(curr_output=output_df)
+            # boxes1 = [output["bbox"] for output in outputs_smooth]
+            # labels = [output["prediction"] for output in outputs_smooth]
+
+            # # save predictions in evaluator
+            # [evaluator.convert_yolo_output_to_tool(label) for label in labels]
+            # evaluator.calculate_all_metrics()
 
             # experiments
             for se, ee in experiments:
@@ -98,21 +78,21 @@ while (cap.isOpened()):
                 ee.history_to_pickle(experiments_dir + '/' + file_name + se.smoother_params)
 
 
-            frame = bbv.draw_multiple_rectangles(frame, boxes1, bbox_color=(255, 0, 0))
-            frame = bbv.add_multiple_labels(frame, labels, boxes1, text_bg_color=(255, 0, 0))
+            # frame = bbv.draw_multiple_rectangles(frame, boxes1, bbox_color=(255, 0, 0))
+            # frame = bbv.add_multiple_labels(frame, labels, boxes1, text_bg_color=(255, 0, 0))
 
-            ## Left
-            real_label_left = extract_label(ground_truth_df_left, i)
-            draw_text(frame, text=real_label_left, font_scale=1,pos=(500, 20),  text_color_bg=(255, 0, 0), draw='left')
-            ## Right
-            real_label_right = extract_label(ground_truth_df_right, i)
-            draw_text(frame, text=real_label_right, font_scale=1, pos=(10, 20), text_color_bg=(255, 0, 0), draw='right')
+            # ## Left
+            # real_label_left = extract_label(ground_truth_df_left, i)
+            # draw_text(frame, text=real_label_left, font_scale=1,pos=(500, 20),  text_color_bg=(255, 0, 0), draw='left')
+            # ## Right
+            # real_label_right = extract_label(ground_truth_df_right, i)
+            # draw_text(frame, text=real_label_right, font_scale=1, pos=(10, 20), text_color_bg=(255, 0, 0), draw='right')
 
             # Display the resulting frame
             # cv2.imshow('Frame', frame)
-            last_frame = frame.copy()
+            # last_frame = frame.copy()
 
-            evaluator.history_to_pickle("metric_evaluation_test")
+            # evaluator.history_to_pickle("metric_evaluation_test")
 
             # Press Q on keyboard to  exit
         if cv2.waitKey(33) & 0xFF == ord('q'):
