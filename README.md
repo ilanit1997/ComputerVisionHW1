@@ -26,6 +26,7 @@ yolov5
 
 
 All the plots attached below were created by ClearML
+
 ### Train:
 
 ##### Comparing 2 experiments: #11 and #5 - 
@@ -43,43 +44,43 @@ Looking into the loss figures, we can see that both are very much close, but #11
 
 ### Validation:
 
-## mAP of all experiments:
+##### mAP of all experiments:
 <img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/%2311%20VS%20%23%205%20-valloss.JPG">
 
 
 #####  Comparing 2 experiments: #11 and #5:
+
 <img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/%2311%20VS%20%23%205%20-valloss.JPG">
 
-#### Loss
 
 <img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/%2311%20vs%20%2312%20-%20validation%20loss.JPG" width="700" height="400">
 
 
-#### mAP50 Metrics of # 1-10
+##### mAP50 Metrics of # 1-10
 
-<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/mAP50%20-%20val.png" width="700" height="400">
+<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/mAP50%20-%20val.png">
 
 ##### mAP Metrics per class # 11
 
-<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/mAP%20results%20-%20validation%20%2311.JPG" width="700" height="400">
+<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/mAP%20results%20-%20validation%20%2311.JPG">
 
 ##### Metrics of # 11
 
-<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/experimet%2311_val.png" width="700" height="400">
+<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/experimet%2311_val.png">
 
 ### Test:
 
 ##### mAP25-75 of Test #11 per class
-<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/mAP%20results%20-%20test%20%2311.JPG" width="700" height="400">
+<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/mAP%20results%20-%20test%20%2311.JPG">
 
 ##### mAP25 of Test #11 per class + all
-<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/mAP25%20results%20-%20test%20%2311.JPG" width="700" height="400">
+<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/mAP25%20results%20-%20test%20%2311.JPG">
 
 ##### mAP50 of Test #11 per class + all
-<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/mAP50%20results%20-%20test%20%2311.JPG" width="700" height="400">
+<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/mAP50%20results%20-%20test%20%2311.JPG">
 
 ##### mAP75 of Test #11 per class + all
-<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/mAP75%20results%20-%20test%20%2311.JPG" width="700" height="400">
+<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/mAP75%20results%20-%20test%20%2311.JPG">
 
 
 
