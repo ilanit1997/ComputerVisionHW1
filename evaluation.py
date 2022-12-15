@@ -104,11 +104,16 @@ class MetricEvaluator:
         return np.sum(f1_scores) / self.num_relevant_classes
 
     def calculate_all_metrics(self):
-        self.metric_history['recall'].append(self.calculate_recall())
-        self.metric_history['accuracy'].append(self.calculate_accuracy())
-        self.metric_history['precision'].append(self.calculate_precision())
-        self.metric_history['f1'].append(self.calculate_f1())
-        self.metric_history['f1_macro'].append(self.calculate_macro_f1_score())
+        try:
+            self.metric_history['recall'].append(self.calculate_recall())
+            self.metric_history['accuracy'].append(self.calculate_accuracy())
+            self.metric_history['precision'].append(self.calculate_precision())
+            self.metric_history['f1'].append(self.calculate_f1())
+            self.metric_history['f1_macro'].append(self.calculate_macro_f1_score())
+            return False
+        except:
+            return True
+
 
     def history_to_pickle(self, destination):
         # save metric history
@@ -145,7 +150,7 @@ def main():
     metri = MetricEvaluator()
     for f in os.listdir('experiments'):
         print(f)
-        metri.print_metric_statistics('experiments/' + f)
+        metri.print_metric_statistics('experiments/' + f, 'experiments/report_' + f[:-4])
     # metri.print_metric_statistics('experiments/P026_tissue1window_size25_smoothingsuper-linear.pkl')
     # use window size 25 and log smoothing
 
