@@ -48,6 +48,7 @@ try:
         boxes1 = df_to_bbox(output_df)
         labels = [output_df['name'].values[0]]
 except TypeError:
+    # no detections
     boxes1 = []
     labels = []
 
