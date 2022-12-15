@@ -20,6 +20,12 @@ class Smoothing:
         self.smoother_params = "window_size" + str(window_size) + "_smoothing" + str(confidence_weighting_method)
 
     def calculate_weighting(self, method=None):
+        """
+        Create weight distribution over window of self.window_size.
+        Options for linear, log, log+linear (called "superlinear") and no smoothing.
+        :param method:
+        :return:
+        """
         if method == "log":
             unnormalized_weights = np.log(range(2, self.window_size + 2))
             return unnormalized_weights / np.sum(unnormalized_weights)
@@ -38,6 +44,13 @@ class Smoothing:
             return last_frame
 
     def smooth(self, curr_output):
+        """
+        Receives an output from yolo, reduces duplicate predictions (more than one to a given arm)
+        and returns two predictions one for each arm.
+        If the object detection model did not make a prediction for a given arm, the last frame is reused.
+        :param curr_output:
+        :return:
+        """
         one_per_arm = self.one_per_arm(curr_output)
         if one_per_arm.shape[0] == 2:
             return self.smooth_two_outputs(one_per_arm)
@@ -45,42 +58,8 @@ class Smoothing:
             return self.smooth_one_outputs(one_per_arm)
         elif one_per_arm.shape[0] == 0:
             return self.smooth_zero_outputs(one_per_arm)
-        # else:
-        #     return self.smooth_two_plus_outputs(curr_output)
-
-    # def smooth_two_plus_outputs(self, curr_output):
-    #     """
-    #     infer which outputs are for which hands like in smooth_one_outputs
-    #     Then for each hand take the prediction with the highest confidence
-    #     and pass to smooth_two_outputs (efficient coding)
-    #     :param curr_output:
-    #     :return:
-    #     """
-    #
-    #     print("used two plus")
-    #     left_indices = list()
-    #     right_indices = list()
-    #     for index, row in curr_output.iterrows():
-    #         distance_from_left = np.linalg.norm(self.last_left_return["bbox"] - row[:4])
-    #         distance_from_right = np.linalg.norm(self.last_right_return["bbox"] - row[:4])
-    #         if distance_from_left < distance_from_right:
-    #             left_indices.append(index)
-    #         else:
-    #             right_indices.append(index)
-    #     if len(left_indices) != 0:
-    #         left_df = curr_output[curr_output.index.isin(left_indices)]
-    #         left_max_confidence_df = left_df[left_df.iloc[:, 4] == left_df.iloc[:, 4].max()]
-    #     if len(right_indices) != 0:
-    #         right_df = curr_output[curr_output.index.isin(right_indices)]
-    #         right_max_confidence_df = right_df[right_df.iloc[:, 4] == right_df.iloc[:, 4].max()]
-    #
-    #     # if there is a prediction for both arms tran use smoothing for two arms
-    #     if len(left_indices) != 0 and len(right_indices) != 0:
-    #         return self.smooth_two_outputs(pd.concat([left_max_confidence_df, right_max_confidence_df], axis=0))
-    #     elif len(left_indices) != 0:
-    #         return self.smooth_one_outputs(left_max_confidence_df)
-    #     else:
-    #         return self.smooth_one_outputs(right_max_confidence_df)
+        else:
+            print("Failure to assign output to left or right arm")
 
 
     def smooth_zero_outputs(self, curr_output):
@@ -104,39 +83,12 @@ class Smoothing:
         number_label, word_label = row[5], row[6]
         self.mapping_dictionary.update({number_label: word_label})
 
-        # distance_from_left = np.linalg.norm(self.last_left_return["bbox"] - row[:4])
-        # distance_from_right = np.linalg.norm(self.last_right_return["bbox"] - row[:4])
-        #
-        # if distance_from_left < distance_from_right:
         prediction_label = row[6]
         hand, _ = prediction_label.split('_', maxsplit=1)
         if hand.lower() == "left":
             self.update_left_hand(row)
-            # self.left_hand_confidence_history = self.left_hand_confidence_history[1:, :]
-            # new_left_prediction = np.zeros(shape=(1, self.left_hand_confidence_history.shape[1]))
-            # new_left_prediction[0, row[5]] = row[4]
-            # self.left_hand_confidence_history = np.vstack([self.left_hand_confidence_history, new_left_prediction])
-            #
-            # left_smoothed_prediction = np.average(self.left_hand_confidence_history, axis=0, weights=self.weighting)
-            # left_prediction = np.argmax(left_smoothed_prediction)
-            # left_smoothed_confidence = np.max(left_smoothed_prediction)
-            # left_bbox = row[:4].astype(int)
-            # self.last_left_return = {"bbox": left_bbox, "prediction": self.mapping_dictionary[left_prediction],
-            #                "confidence": left_smoothed_confidence}
         else:
             self.update_right_hand(row)
-            # self.right_hand_confidence_history = self.right_hand_confidence_history[1:, :]
-            # new_right_prediction = np.zeros(shape=(1, self.right_hand_confidence_history.shape[1]))
-            # new_right_prediction[0, row[5]] = row[4]
-            # self.right_hand_confidence_history = np.vstack([self.right_hand_confidence_history, new_right_prediction])
-            #
-            # right_smoothed_prediction = np.average(self.right_hand_confidence_history, axis=0, weights=self.weighting)
-            # right_prediction = np.argmax(right_smoothed_prediction)
-            # right_smoothed_confidence = np.max(right_smoothed_prediction)
-            # right_bbox = row[:4].astype(int)
-            # self.right_last_bbox = right_bbox
-            # self.last_right_return = {"bbox": right_bbox, "prediction": self.mapping_dictionary[right_prediction],
-            #                 "confidence": right_smoothed_confidence}
         return self.last_left_return, self.last_right_return
 
 
@@ -173,35 +125,16 @@ class Smoothing:
             left_hand_row = row_2
         self.update_left_hand(left_hand_row)
         self.update_right_hand(right_hand_row)
-        # if self.right_hand_confidence_history.shape[0] >= self.window_size:
-        #     self.right_hand_confidence_history = self.right_hand_confidence_history[1:, :]
-        # new_right_prediction = np.zeros(shape=(1, self.right_hand_confidence_history.shape[1]))
-        # new_right_prediction[0, right_hand_row[5]] = right_hand_row[4]
-        # self.right_hand_confidence_history = np.vstack([self.right_hand_confidence_history, new_right_prediction])
-        #
-        # if self.left_hand_confidence_history.shape[0] >= self.window_size:
-        #     self.left_hand_confidence_history = self.left_hand_confidence_history[1:, :]
-        # new_left_prediction = np.zeros(shape=(1, self.left_hand_confidence_history.shape[1]))
-        # new_left_prediction[0, left_hand_row[5]] = left_hand_row[4]
-        # self.left_hand_confidence_history = np.vstack([self.left_hand_confidence_history, new_left_prediction])
-        #
-        # right_smoothed_prediction = np.average(self.right_hand_confidence_history, axis=0, weights=self.weighting)
-        # right_prediction = np.argmax(right_smoothed_prediction)
-        # right_smoothed_confidence = np.max(right_smoothed_prediction)
-        # right_bbox = right_hand_row[:4].astype(int)
-        # self.last_right_return = {"bbox": right_bbox, "prediction": self.mapping_dictionary[right_prediction],
-        #                 "confidence": right_smoothed_confidence}
-        #
-        # left_smoothed_prediction = np.average(self.left_hand_confidence_history, axis=0, weights=self.weighting)
-        # left_prediction = np.argmax(left_smoothed_prediction)
-        # left_smoothed_confidence = np.max(left_smoothed_prediction)
-        # left_bbox = left_hand_row[:4].astype(int)
-        # self.last_left_return = {"bbox": left_bbox, "prediction": self.mapping_dictionary[left_prediction],
-        #                "confidence": left_smoothed_confidence}
 
         return self.last_left_return, self.last_right_return
 
     def update_left_hand(self, row):
+        """
+        Receives a row assigned to the left hand and updates the bounding box and prediction history.
+        Returns a smoothed bounding box and prediction using the smoothers initalized weighting.
+        :param row:
+        :return:
+        """
         if self.first_left_prediction:
             self.first_left_prediction = False
             self.left_hand_bbox_history = np.vstack([row[:4].astype(int) for i in range(self.window_size)])
@@ -226,6 +159,12 @@ class Smoothing:
                                  "confidence": left_smoothed_confidence}
 
     def update_right_hand(self, row):
+        """
+        Receives a row assigned to the right hand and updates the bounding box and prediction history.
+        Returns a smoothed bounding box and prediction using the smoothers initalized weighting.
+        :param row:
+        :return:
+        """
         if self.first_right_prediction:
             self.first_right_prediction = False
             self.right_hand_bbox_history = np.vstack([row[:4].astype(int) for i in range(self.window_size)])
@@ -248,6 +187,12 @@ class Smoothing:
                                  "confidence": right_smoothed_confidence}
 
     def one_per_arm(self, curr_output):
+        """
+        Receives the yolo models output and removes duplicate predictions (more than one for each arm)
+        Returns processed dataframe
+        :param curr_output:
+        :return:
+        """
         left_indices = list()
         right_indices = list()
         for index, row in curr_output.iterrows():

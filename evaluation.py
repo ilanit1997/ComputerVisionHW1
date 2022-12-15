@@ -28,10 +28,20 @@ class MetricEvaluator:
         self.num_relevant_classes = len(left_relevant_classes.union(right_relevant_classes))
 
     def convert_tool_to_label(self, tool):
+        """
+        Converts TX string to label that discrete numeric label
+        :param tool:
+        :return:
+        """
         tool_to_label = {"T0": 0, "T1": 1, "T2": 2, "T3": 3}
         return tool_to_label[tool]
 
     def convert_file_to_list(self, df):
+        """
+        Explodes concise tool usage file to a list of ground truths for each file (arm) passed to it
+        :param df:
+        :return:
+        """
         ground_truth = np.zeros(df.iloc[-1, 1]) # last row end time, maximum time
         for index, row in df.iterrows():
             ground_truth[row[0]:row[1]] = self.convert_tool_to_label(row[2])
@@ -56,6 +66,11 @@ class MetricEvaluator:
         self.right_predictions.append(self.yolo_to_label[lower_case_pred])
 
     def convert_yolo_output_to_tool(self, yolo_output):
+        """
+        updates history of predictions given a yolo output
+        :param yolo_output:
+        :return:
+        """
         hand, tool = yolo_output.split('_', maxsplit=1)
 
         if hand == "Left":
@@ -64,6 +79,10 @@ class MetricEvaluator:
             self.update_right_prediction(tool)
 
     def calculate_recall(self):
+        """
+        Calculates and returns recall for both arms predictions and for each tool
+        :return:
+        """
         # shear off the ground truths not yet predicted
         right_ground_truth = self.right_tool_labels[:len(self.right_predictions)]
         left_ground_truth = self.left_tool_labels[:len(self.left_predictions)]
@@ -73,6 +92,10 @@ class MetricEvaluator:
         return recall_score(ground_truth, predictions, labels=list(range(4)), average=None)
 
     def calculate_accuracy(self):
+        """
+        Calculates and returns accuracy for both arms predictions
+        :return:
+        """
         # shear off the ground truths not yet predicted
         right_ground_truth = self.right_tool_labels[:len(self.right_predictions)]
         left_ground_truth = self.left_tool_labels[:len(self.left_predictions)]
@@ -82,6 +105,10 @@ class MetricEvaluator:
         return accuracy_score(ground_truth, predictions)
 
     def calculate_f1(self):
+        """
+        Calculates and returns f1 for both arms predictions and for each tool
+        :return:
+        """
         # shear off the ground truths not yet predicted
         right_ground_truth = self.right_tool_labels[:len(self.right_predictions)]
         left_ground_truth = self.left_tool_labels[:len(self.left_predictions)]
@@ -91,6 +118,10 @@ class MetricEvaluator:
         return f1_score(ground_truth, predictions, labels=list(range(4)), average=None)
 
     def calculate_precision(self):
+        """
+        Calculates and returns precision for both arms predictions and for each tool
+        :return:
+        """
         # shear off the ground truths not yet predicted
         right_ground_truth = self.right_tool_labels[:len(self.right_predictions)]
         left_ground_truth = self.left_tool_labels[:len(self.left_predictions)]
@@ -100,17 +131,35 @@ class MetricEvaluator:
         return precision_score(ground_truth, predictions, labels=list(range(4)), average=None)
 
     def calculate_macro_f1_score(self):
+        """
+        Calculates and returns f1-macro (average of f1 scores) for both arms predictions
+        :return:
+        """
         f1_scores = self.calculate_f1()
         return np.sum(f1_scores) / self.num_relevant_classes
 
     def calculate_all_metrics(self):
-        self.metric_history['recall'].append(self.calculate_recall())
-        self.metric_history['accuracy'].append(self.calculate_accuracy())
-        self.metric_history['precision'].append(self.calculate_precision())
-        self.metric_history['f1'].append(self.calculate_f1())
-        self.metric_history['f1_macro'].append(self.calculate_macro_f1_score())
+        """
+        Updates metric history stored within evaluation object with all of the metrics
+        :return:
+        """
+        try:
+            self.metric_history['recall'].append(self.calculate_recall())
+            self.metric_history['accuracy'].append(self.calculate_accuracy())
+            self.metric_history['precision'].append(self.calculate_precision())
+            self.metric_history['f1'].append(self.calculate_f1())
+            self.metric_history['f1_macro'].append(self.calculate_macro_f1_score())
+            return False
+        except:
+            return True
+
 
     def history_to_pickle(self, destination):
+        """
+        Takes metric history and stores it in pickle given a destination file (pass without .pkl)
+        :param destination:
+        :return:
+        """
         # save metric history
         with open(destination + '.pkl', 'wb') as handle:
             pickle.dump(self.metric_history, handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -145,7 +194,7 @@ def main():
     metri = MetricEvaluator()
     for f in os.listdir('experiments'):
         print(f)
-        metri.print_metric_statistics('experiments/' + f)
+        metri.print_metric_statistics('experiments/' + f, 'experiments/report_' + f[:-4])
     # metri.print_metric_statistics('experiments/P026_tissue1window_size25_smoothingsuper-linear.pkl')
     # use window size 25 and log smoothing
 
