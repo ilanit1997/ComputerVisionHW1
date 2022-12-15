@@ -2,12 +2,13 @@ import bbox_visualizer as bbv
 import torch
 import numpy as np
 from helpers import *
+import cv2
 
 
 ## load paths of different files
 PATH = 'sample_images/images'
 FILES = os.listdir(PATH)
-rand_idx = np.random.choice(list(range(len(FILES))), 1)[0]
+rand_idx = 2 ## can be changes to 0 .. 6
 curr_file = FILES[rand_idx]
 image_path = os.path.join(PATH, curr_file) ## ex: P016_tissue1_6625
 file_name = '_'.join(curr_file.split('_')[:2])
@@ -48,7 +49,7 @@ try:
         boxes1 = df_to_bbox(output_df)
         labels = [output_df['name'].values[0]]
 except TypeError:
-    # no detections
+    ## TODO - handle
     boxes1 = []
     labels = []
 
@@ -72,8 +73,9 @@ frame = bbv.add_multiple_labels(frame, labels, boxes1, top = False)
 
 
 # Display the resulting frame
+# image = cv2.copyMakeBorder(frame, 15,15,15,15, borderType = cv2.BORDER_CONSTANT)
 cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
-cv2.imshow('Frame', frame)
+cv2.imshow('Frame', image)
 cv2.waitKey(0) #is required so that the image doesn’t close immediately. It will Wait for a key press before closing the image.
 
 # Closes all the frames

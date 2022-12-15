@@ -28,7 +28,7 @@ def extract_label(df, frame_idx):
 def draw_text(img, text,
           font=cv2.FONT_ITALIC,
           pos=(0, 0),
-          font_scale=3,
+          font_scale=0.5,
           font_thickness=2,
           text_color=(0, 255, 0),
           text_color_bg=(0, 0, 0), draw='right'
@@ -74,8 +74,10 @@ def df_to_bbox(df):
     return bbox
 
 
-indexToYolo = {'0': 'Left_Empty', '1': 'Left_Forceps', '2': 'Left_Needle_driver', '3': 'Left_Scissors', '4': 'Right_Empty', \
-          '5': 'Right_Forceps', '6' : 'Right_Needle_driver', '7': 'Right_Scissors'}
+indexToYolo = {'0': 'Right_Scissors', '1': 'Left_Scissors', '2': 'Right_Needle_driver', '3': 'Left_Needle_driver',
+               '4': 'Right_Forceps', \
+          '5': 'Left_Forceps', '6' : 'Right_Empty', '7': 'Left_Empty'}
+
 
 def darknetbbox_to_yolo(df, w_img=640, h_img=640):
     """
