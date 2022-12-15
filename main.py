@@ -1,10 +1,8 @@
 from roboflow import Roboflow
-# import train.py
-
 
 
 def load_data():
-    rf = Roboflow(api_key="mA7koMgDVFBLYkhBiJtz")
+    rf = Roboflow(api_key="#####") ## this is a secret key
     project = rf.workspace("ilanitdavidcv1").project("cv_hw1_flipped_dataset")
     dataset = project.version(1).download("yolov5")
     return dataset
