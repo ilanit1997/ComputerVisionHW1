@@ -1,9 +1,7 @@
 import cv2
-import numpy as np
-import bbox_visualizer as bbv
-import torch
+import json
+import os
 import pandas as pd
-
 
 tool_usage ={"T0": "no tool in hand" ,
  "T1":  "needle_driver",
@@ -11,6 +9,10 @@ tool_usage ={"T0": "no tool in hand" ,
  "T3": "scissors"}
 
 
+PATH = 'HW1_raw_dataset\\HW1_dataset\\tool_usage'
+
+indexToYolo = {'0': 'Left_Empty', '1': 'Left_Forceps', '2': 'Left_Needle_driver', '3': 'Left_Scissors', '4': 'Right_Empty', \
+          '5': 'Right_Forceps', '6' : 'Right_Needle_driver', '7': 'Right_Scissors'}
 
 
 def extract_label(df, frame_idx):
@@ -52,3 +54,44 @@ def draw_text(img, text,
 
 
     return text_size
+
+
+
+def extract_left_right(output_df):
+    left_id, right_id = 1, 0
+    if 'Left' in output_df['name'].values[0]:
+        left_id, right_id = 0, 1
+
+    left_df = pd.DataFrame(output_df.iloc[left_id, :]).T
+    right_df = pd.DataFrame(output_df.iloc[right_id, :]).T
+
+    return left_df, right_df
+
+def df_to_bbox(df):
+    # bbox = [xmin, ymin, xmax, ymax]
+    bbox = [df['xmin'].values[0], df['ymin'].values[0], df['xmax'].values[0], df['ymax'].values[0]]
+    bbox = [int(x) for x in bbox]
+    return bbox
+
+
+indexToYolo = {'0': 'Left_Empty', '1': 'Left_Forceps', '2': 'Left_Needle_driver', '3': 'Left_Scissors', '4': 'Right_Empty', \
+          '5': 'Right_Forceps', '6' : 'Right_Needle_driver', '7': 'Right_Scissors'}
+
+def darknetbbox_to_yolo(df, w_img=640, h_img=640):
+    """
+    xcenter = (xmin + w2) / w_img -- > xmin = xcenter*w_img - w2
+    ycenter = (ymin + h2) / h_img -- > ymin = ycenter*h_img - h2
+    w = w / w_img -- > w' = w*w_img
+    h = h / h_img -- > h' = h*h_img
+    xmax = xmin + w'
+    ymax = ymin + h'
+    """
+    for i in range(len(df)):
+        xcenter, ycenter, w, h = df.loc[i, 'xcenter'], df.loc[i, 'ycenter'], df.loc[i, 'w'], df.loc[i, 'h']
+        wtag, htag = w*w_img, h*h_img
+        df.loc[i, 'xmin'] = (xcenter - w /2) *w_img
+        df.loc[i, 'xmax'] = df.loc[i, 'xmin'] + wtag
+        df.loc[i, 'ymin'] = (ycenter - h /2) *h_img
+        df.loc[i, 'ymax'] = df.loc[i, 'ymin'] + htag
+        df.loc[i, 'name'] = indexToYolo[str(df.loc[i, 'label_index'])]
+    return df
