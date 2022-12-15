@@ -4,7 +4,15 @@
 predict tool usage of of different test subjects, in a simulation of 2 procedures - tissue (=toilet paper), and ballon, sewing techniques.  
 
 ## model:
-yolov5
+
+yolov5 using https://github.com/ultralytics/yolov5
+
+## model output:
+
+when running predict.py:
+
+<img src="https://github.com/ilanit1997/ComputerVisionHW1/blob/master/results%20-%20plots/predict%20output%201.JPG" width="400" height="400">
+
 
 ## Results:
 ### Experiment Table
