@@ -18,8 +18,8 @@ when running predict.py:
 1. Notebooks - mainly used for preprocessing and EDA
 2. Results plots - as the name suggests, all the figures seen below were created in ClearML and/or using YOLOv5 plots function, and are saved there.
 3. Sample_images, sample_videos - a set of a few images and videos labels and images were selected to be used as a demo in predict.py (we didn't want to upload the full dataset to this Git).
-4. Appendix 1 - fixing labels - we documented some of the problems we encountered during the preprocessing and data quality process.
-5. Appendix 2 - Tool usage results - probably the most important file here, as it documents the results of the smoothing algorithms we used, on the Test videos, in the tool usage part of the HW.
+4. **Appendix 1 - fixing labels** - we documented some of the problems we encountered during the preprocessing and data quality process.
+5. **Appendix 2 - Tool usage results** - probably the **most important file here**, as it documents the results of the smoothing algorithms we used, on the Test videos, in the tool usage part of the HW.
 6. best.pkl - our best model pkl (#11)
 7. predict.py - a script which was written to enable prediction of tool usage + object detection on a single frame.
 8. video.py - used to predict the tool usage on a series of frames, as input of a video. Here we utilized the different smoothing algorithms.
